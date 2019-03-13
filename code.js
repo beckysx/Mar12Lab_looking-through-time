@@ -241,6 +241,7 @@ var drawChart =function(data){
                   .duration(300)
                   .attr('x', 70)
                   .style('font-size', '20px')
+                  .style('text-decoration', 'underline')
 
               }
               else if (getID=="previous") {
@@ -249,6 +250,7 @@ var drawChart =function(data){
                   .duration(300)
                   .attr('x', 160)
                   .style('font-size', '20px')
+                  .style('text-decoration', 'underline')
 
               }
 
@@ -270,6 +272,7 @@ var drawChart =function(data){
                   .duration(300)
                   .attr('x', 0)
                   .style('font-size', '15px')
+                  .style('text-decoration', 'none')
 
               }
               else if (getID=="previous") {
@@ -278,6 +281,7 @@ var drawChart =function(data){
                   .duration(300)
                   .attr('x', 230)
                   .style('font-size', '15px')
+                  .style('text-decoration', 'none')
 
               }
             })
