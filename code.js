@@ -155,15 +155,17 @@ var drawChart =function(data){
       })
       .attr('y',40)
       .attr('class', function(d,i){
-        return i
+        return "day"+i
       })
       .text(function(d){
         return "day"+d
       })
 
 
-      d3.select(".timeline").select(function(){
-        return "."+date}).style('fill', 'red')
+      console.log(typeof(d3.select('.day0')))
+      console.log(typeof(d3.select(function(){return ".day"+date.toString()})))
+
+      d3.select(function(){return ".day"+date.toString()}).style('fill', 'red')
 
 
 
