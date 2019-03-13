@@ -1,9 +1,11 @@
+//161 167 287 146
 var dataset= d3.json('gradeDataTime.json');
+
 var drawChart =function(data){
 
 
-      var screen={width:500,height:400};
-      var margin = {top: 30, right: 30, bottom: 30, left: 70};
+      var screen={width:500,height:420};
+      var margin = {top: 50, right: 30, bottom: 30, left: 70};
       var w = screen.width - margin.left - margin.right;
       var h = screen.height - margin.top - margin.bottom;
       var date=0
@@ -32,7 +34,7 @@ var drawChart =function(data){
 
       var timeposition=d3.scaleLinear()
           .domain([0, 9])
-          .range([50, 1100])
+          .range([80, 1320])
 
 
 
@@ -52,6 +54,29 @@ var drawChart =function(data){
       .attr('id', function(d){
           return d.name
         })
+      .on("mouseover",function(){
+          var getID=d3.select(this).attr("id")
+          var getY=getY=d3.select(this).attr("y")
+          d3.select("."+getID+"text")
+          .transition()
+          .ease(d3.easeBounce)
+          .style('font-size', '25px')
+          .style('fill', 'black')
+          .style('text-decoration', 'underline')
+          .attr("y",getY-20)
+        })
+      .on('mouseout', function(){
+        var getID=d3.select(this).attr("id")
+        var getY=d3.select(this).attr("y")
+        d3.select("."+getID+"text")
+        .transition()
+        .duration(200)
+        .ease(d3.easeBounce)
+        .style('font-size', '15px')
+        .style('fill', 'white')
+        .style('text-decoration', 'none')
+        .attr("y",getY-10)
+      })
 
 
 
@@ -69,6 +94,10 @@ var drawChart =function(data){
         return yScale(d.grade)-10
       })
       .text(function(d){return d.grade})
+      .attr('class', function(d){
+        return d.name+"text"
+      })
+      .style('fill', 'white')
 
 
 
@@ -95,7 +124,7 @@ var drawChart =function(data){
       .attr('x',function(d,i){
         return xScale(i)+(xScale.bandwidth()/2)
       })
-      .attr('y',screen.height-margin.bottom)
+      .attr('y',screen.height-margin.bottom-15)
       .text(function(d){
         return d.name
       })
@@ -106,7 +135,7 @@ var drawChart =function(data){
 
       // previous button
       var previous=d3.select("body").append("svg")
-      .attr('width', 300)
+      .attr('width', 350)
       .attr('height', 300)
       .attr('class', 'changeButton')
       .attr('id', 'previous')
@@ -119,17 +148,25 @@ var drawChart =function(data){
       .attr('height', 200)
       .attr('class', 'actualImage')
 
+      previous.append("text")
+      .attr('x', 230)
+      .attr('y', 150)
+      .attr('id', 'previoustext')
+      .attr('text-anchor', 'left')
+      .text("Previous day")
+      .style('font-family', 'Josefin Sans')
+
 
 
 
       // next button
-      var previous=d3.select("body").append("svg")
+      var next=d3.select("body").append("svg")
       .attr('width', 300)
       .attr('height', 300)
       .attr('class', 'changeButton')
       .attr('id', 'next')
 
-      previous.append("svg:image")
+      next.append("svg:image")
       .attr('xlink:href', function(){return "next.png"})
       .attr('x', 50)
       .attr('y', 50)
@@ -137,35 +174,52 @@ var drawChart =function(data){
       .attr('height', 200)
       .attr('class', 'actualImage')
 
+      next.append("text")
+      .attr('x', 0)
+      .attr('id', 'nexttext')
+      .attr('text-anchor', 'right')
+      .attr('y', 150)
+      .text("Next day")
+      .style('font-family', 'Josefin Sans')
+
 
 
 
       // timeline
-      var time=[1,2,3,4,5,6,7,8,9,10]
       var timeline=d3.select("body").append("svg")
       .attr('class', 'timeline')
-      .attr('width', 1200)
-      .attr('height', 70)
+      .attr('width', 1400)
+      .attr('height', 100)
+
+      d3.select(".timeline")
+      .append("circle")
+      .attr('cx', timeposition(date))
+      .attr('cy', 50)
+      .attr('r', 50)
+      .attr('fill-opacity', 0.7)
+      .style('fill', '#53687E')
+
       timeline.selectAll("text")
-      .data(time)
+      .data(data)
       .enter()
       .append("text")
+      .attr('text-anchor', 'middle')
       .attr('x',function(d,i){
         return timeposition(i)
       })
-      .attr('y',40)
+      .attr('y',55)
       .attr('class', function(d,i){
         return "day"+i
       })
       .text(function(d){
-        return "day"+d
+        return "Day"+d.day
       })
 
 
-      console.log(typeof(d3.select('.day0')))
-      console.log(typeof(d3.select(function(){return ".day"+date.toString()})))
-
-      d3.select(function(){return ".day"+date.toString()}).style('fill', 'red')
+      d3.select(".day"+date)
+      .style('text-decoration', 'underline')
+      .style('font-size', '25px')
+      .style('fill', 'white')
 
 
 
@@ -179,6 +233,26 @@ var drawChart =function(data){
               .attr('height', 300)
               .attr('x', 0)
               .attr('y', 0)
+
+              var getID= d3.select(this).attr("id")
+              if (getID=="next"){
+                d3.select("#nexttext")
+                  .transition()
+                  .duration(300)
+                  .attr('x', 70)
+                  .style('font-size', '20px')
+
+              }
+              else if (getID=="previous") {
+                d3.select("#previoustext")
+                  .transition()
+                  .duration(300)
+                  .attr('x', 160)
+                  .style('font-size', '20px')
+
+              }
+
+
             })
             .on("mouseout",function(){
               d3.select(this).select(".actualImage")
@@ -188,10 +262,27 @@ var drawChart =function(data){
               .attr('height', 200)
               .attr('x', 50)
               .attr('y', 50)
+
+              var getID= d3.select(this).attr("id")
+              if (getID=="next"){
+                d3.select("#nexttext")
+                  .transition()
+                  .duration(300)
+                  .attr('x', 0)
+                  .style('font-size', '15px')
+
+              }
+              else if (getID=="previous") {
+                d3.select("#previoustext")
+                  .transition()
+                  .duration(300)
+                  .attr('x', 230)
+                  .style('font-size', '15px')
+
+              }
             })
             .on("click",function(){
               var getID= d3.select(this).attr("id")
-
               if (getID=="next"){
                 var svg=d3.select(".mainchart")
 
@@ -213,28 +304,47 @@ var drawChart =function(data){
                   return xScale(i)
                 })
                 .attr('y', function(d){return yScale(d.grade)})
-                .attr('width', xScale.bandwidth())
                 .attr('height',function(d){return h-yScale(d.grade)})
-                .attr('fill', function(d,i){
-                    return colors(i)
-                  })
+
+
+
+                // timeline
+                d3.select(".timeline")
+                .select("circle")
+                .transition()
+                .duration(500)
+                .attr('cx', timeposition(date))
+
+                d3.select(".day"+(date-1))
+                .transition()
+                .duration(500)
+                .style('text-decoration', 'none')
+                .style('font-size', '15px')
+                .style('fill', 'black')
+
+
+                d3.select(".day"+date)
+                .transition()
+                .duration(500)
+                .delay(200)
+                .style('text-decoration', 'underline')
+                .style('font-size', '25px')
+                .style('fill', 'white')
+
 
                 // labels
                 svg.selectAll("text")
                 .data(data[date].grades)
                 .transition()
                 .duration(500)
-                .ease(d3.easeCircle)
-                .attr('text-anchor', 'middle')
+                .ease(d3.easeBounce)
                 .attr('x',function(d,i){
                   return xScale(i)+(xScale.bandwidth()/2)
                 })
                 .attr('y', function(d){
                   return yScale(d.grade)-10
                 })
-                .text(function(d){return d.grade})
-              }
-
+                .text(function(d){return d.grade})}
               else if (getID=="previous") {
 
                 var svg=d3.select(".mainchart")
@@ -256,17 +366,38 @@ var drawChart =function(data){
                   return xScale(i)
                 })
                 .attr('y', function(d){return yScale(d.grade)})
-                .attr('width', xScale.bandwidth())
                 .attr('height',function(d){return h-yScale(d.grade)})
-                .attr('fill', function(d,i){
-                    return colors(i)
-                  })
+
+                // timeline
+                d3.select(".timeline")
+                .select("circle")
+                .transition()
+                .duration(500)
+                .attr('cx', timeposition(date))
+
+                d3.select(".day"+(date+1))
+                .transition()
+                .duration(500)
+                .style('text-decoration', 'none')
+                .style('font-size', '15px')
+                .style('fill', 'black')
+
+
+                d3.select(".day"+date)
+                .transition()
+                .duration(500)
+                .delay(200)
+                .style('text-decoration', 'underline')
+                .style('font-size', '25px')
+                .style('fill', 'white')
+
 
                 // labels
                 svg.selectAll("text")
                 .data(data[date].grades)
                 .transition()
                 .duration(500)
+                .ease(d3.easeBounce)
                 .attr('text-anchor', 'middle')
                 .attr('x',function(d,i){
                   return xScale(i)+(xScale.bandwidth()/2)
@@ -275,49 +406,8 @@ var drawChart =function(data){
                   return yScale(d.grade)-10
                 })
                 .text(function(d){return d.grade})
-              }
 
-              })
-
-
-
-
-      //rects color change
-      d3.select('.mainchart').selectAll('rect')
-      .on("mouseover",function(){
-        d3.select(this)
-        .transition()
-        .duration(200)
-        .attr('width', xScale.bandwidth()+15)
-        .attr('x', function(){
-          return parseFloat(d3.select(this).attr("x"))-10
-        })
-        .attr('y', function(){
-          return parseFloat(d3.select(this).attr("y"))-5
-        })
-        .attr('height', function(){
-          return parseFloat(d3.select(this).attr("height"))+10
-        })
-        .attr('fill', "#34435E")
-      })
-      .on("mouseout",function(){
-        d3.select(this)
-        .transition()
-        .duration(200)
-        .attr('width', xScale.bandwidth())
-        .attr('x', function(){
-          return parseFloat(d3.select(this).attr("x"))+10
-        })
-        .attr('y', function(){
-          return parseFloat(d3.select(this).attr("y"))+5
-        })
-        .attr('height', function(){
-          return parseFloat(d3.select(this).attr("height"))-10
-        })
-        .attr('fill', function() {
-          return colors(d3.select(this).attr("id"))
-        })
-      })
+              }})
 
 
 }
