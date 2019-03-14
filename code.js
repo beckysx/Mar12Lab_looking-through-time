@@ -214,6 +214,103 @@ var drawChart =function(data){
       .text(function(d){
         return "Day"+d.day
       })
+      .on("mouseover",function(){
+        var getcx=d3.select(this).attr("x")
+        d3.select(this)
+        .transition()
+        .duration(500)
+        .delay(200)
+        .style('text-decoration', 'underline')
+        .style('font-size', '25px')
+        .style('fill', 'white')
+        d3.select(".timeline")
+        .select("circle")
+        .transition()
+        .duration(500)
+        .attr('cx', getcx)
+        d3.select(".day"+date)
+        .transition()
+        .duration(500)
+        .style('text-decoration', 'none')
+        .style('font-size', '15px')
+        .style('fill', 'black')
+      })
+      .on("mouseout",function(){
+        d3.select(".timeline").select("circle")
+        .transition()
+        .duration(500)
+        .attr('cx', timeposition(date))
+        d3.select(".day"+date)
+        .transition()
+        .duration(500)
+        .style('text-decoration', 'underline')
+        .style('font-size', '25px')
+        .style('fill', 'white')
+        d3.select(this)
+        .transition()
+        .duration(500)
+        .delay(200)
+        .style('text-decoration', 'none')
+        .style('font-size', '15px')
+        .style('fill', 'black')
+      })
+      .on("click",function(){
+        date=d3.select(this).attr("class").replace(/[^0-9]/ig,"")
+
+          // rects
+          svg.selectAll("rect")
+          .data(data[date].grades)
+          .transition()
+          .duration(500)
+          .ease(d3.easeBounce)
+          .attr("x",function(d,i){
+            return xScale(i)
+          })
+          .attr('y', function(d){return yScale(d.grade)})
+          .attr('height',function(d){return h-yScale(d.grade)})
+
+
+
+          // timeline
+          d3.select(".timeline")
+          .select("circle")
+          .transition()
+          .duration(500)
+          .attr('cx', timeposition(date))
+
+          d3.select(".day"+(date-1))
+          .transition()
+          .duration(500)
+          .style('text-decoration', 'none')
+          .style('font-size', '15px')
+          .style('fill', 'black')
+
+
+          d3.select(".day"+date)
+          .transition()
+          .duration(500)
+          .delay(200)
+          .style('text-decoration', 'underline')
+          .style('font-size', '25px')
+          .style('fill', 'white')
+
+
+          // labels
+          svg.selectAll("text")
+          .data(data[date].grades)
+          .transition()
+          .duration(500)
+          .ease(d3.easeBounce)
+          .attr('x',function(d,i){
+            return xScale(i)+(xScale.bandwidth()/2)
+          })
+          .attr('y', function(d){
+            return yScale(d.grade)-10
+          })
+          .text(function(d){return d.grade})
+
+
+      })
 
 
       d3.select(".day"+date)
