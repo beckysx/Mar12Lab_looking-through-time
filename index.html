@@ -1,13 +1,14 @@
 <html>
 <head>
   <style>
-  @import url('https://fonts.googleapis.com/css?family=Josefin+Sans|ZCOOL+QingKe+HuangYou');
+    @import url('https://fonts.googleapis.com/css?family=Josefin+Sans|ZCOOL+QingKe+HuangYou');
 
     svg.mainchart{
       position: absolute;
       top: 200px;
       left: 430px;
     }
+
     #previous{
       position: absolute;
       top: 250px;
@@ -18,6 +19,7 @@
       position: absolute;
       left: 1000px;
     }
+
     svg.timeline{
       position: absolute;
       top: 50px;
@@ -26,6 +28,7 @@
       border-bottom: dotted;
       border-width: 2px;
     }
+
     svg rect:hover{
       fill:#151E3F;
     }
@@ -35,15 +38,56 @@
       font-size: 20px;
     }
 
+    #tooltip{
+      position: relative;
+      top: -38px;
+      left: 380px;
+      height: 310px;
+      width: 600px;
+      background-color: #FCF5DE;
+			border-radius: 10px;
+			box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+			pointer-events: none;
+    }
+
+    .note{
+      padding: 10px;
+      width: 600px;
+      background-color: #FCF5DE;
+			border-radius: 10px;
+			box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+			pointer-events: none;
+      position: relative;
+      top: 600px;
+      left: 380px;
+    }
+
+    .hidden {
+				display: none;
+			}
+
+    .tooltip{
+      position: relative;
+      top:15px;
+
+    }
+
 
   </style>
 
 </head>
 <body>
-  <div class="hidden" id="tooltip">
-
-  </div>
-
+<div class="note">
+  <h2>Notes</h2>
+  <ol>
+    <li>Hover person names to see the grade trend of the person in 10 days</li>
+    <li>Click timeline on top to change data</li>
+    <li>Click arrows on sides to change data</li>
+    <li>Hover bars to see specific score</li>
+    <li>When hovering attows, the picture and corresponding text will move in the proper direction.</li>
+    <li>Thank you!</li>
+  </ol>
+</div>
 
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>

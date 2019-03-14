@@ -5,7 +5,7 @@ var drawChart =function(data){
 
 
       var screen={width:500,height:420};
-      var tscreen={width:400,height:400};
+      var tscreen={width:600,height:300};
       var margin = {top: 50, right: 30, bottom: 30, left: 70};
       var tmargin = {top: 20, right: 10, bottom: 30, left: 40};
       var w = screen.width - margin.left - margin.right;
@@ -14,13 +14,19 @@ var drawChart =function(data){
       var th=tscreen.height - tmargin.top - tmargin.bottom;
       var date=0
 
+
+
       var svg = d3.select('body').append('svg')
           .attr('width', screen.width)
           .attr('height', screen.height)
           .attr('class', 'mainchart')
           .style('display', 'block')
 
-      var tsvg = d3.select("body").select('div').append('svg')
+      var tooltip=d3.select('body').append('div')
+      .attr('id', 'tooltip')
+      .attr('class', 'hidden')
+
+      var tsvg = tooltip.append('svg')
           .attr('width', tscreen.width)
           .attr('height', tscreen.height)
           .attr('class', 'tooltip')
@@ -47,10 +53,10 @@ var drawChart =function(data){
 
       var tooltipXscale=d3.scaleLinear()
           .domain([0,9 ])
-          .range([5,tw ]);
+          .range([tmargin.left,tw ]);
       var tooltipYscale=d3.scaleLinear()
           .domain([0,100 ])
-          .range([th,0 ]);
+          .range([th,tmargin.top ]);
 
 
       // rects
@@ -93,7 +99,7 @@ var drawChart =function(data){
       })
 
       // circles
-      tsvg.select("circle")
+      tsvg.selectAll("circle")
       .data(data)
       .enter()
       .append("circle")
@@ -104,7 +110,9 @@ var drawChart =function(data){
         return tooltipYscale(d.grades[0].grade)
       } )
       .attr('r', 5)
-      .style('fill', '#111');
+      .attr('fill', function(d){return colors(d.name)})
+
+
 
 
       // labels
@@ -134,9 +142,10 @@ var drawChart =function(data){
         return tooltipXscale(i)
       })
       .attr('y', function(d,i){
-        return tooltipYscale(d.grades[i].grade)-10
+        return tooltipYscale(d.grades[0].grade)-10
       })
-      .text(function(d,i){return d.grades[i].grade})
+      .text(function(d,i){return d.grades[0].grade})
+      .style('font-size', '10')
 
 
 
@@ -147,22 +156,6 @@ var drawChart =function(data){
       .attr('class', 'yAxis')
       .call(yAxis)
       .attr('transform', 'translate(' + (margin.left/1.5) + ',0)')
-
-      var tyAxis=d3.axisLeft(tooltipYscale)
-      .tickSize(0)
-      tsvg.append("g")
-      .attr('class', 'tyAxis')
-      .call(tyAxis)
-      .attr('transform', 'translate(' + (tmargin.left/1.5) + ',0)')
-
-      // tooltip x-axis
-      var txAxis=d3.axisLeft(tooltipXscale)
-      .tickSize(0)
-      tsvg.append("g")
-      .attr('class', 'txAxis')
-      .call(txAxis)
-      .attr('transform', 'translate(' + (tmargin.bottom/1.5) + ',0)')
-
 
 
       // legend
@@ -180,7 +173,56 @@ var drawChart =function(data){
       .text(function(d){
         return d.name
       })
+      .attr('id',function(d,i){
+        return "person"+i
+      } )
       .attr('fill', function(d){return colors(d.name)})
+      .on('mouseover', function(){
+
+        d3.select("#tooltip").classed("hidden",false)
+
+        var getindex=parseInt(d3.select(this).attr("id").replace(/[^0-9]/ig,""))
+
+        tsvg.selectAll("circle")
+        .data(data)
+        .transition()
+        .duration(500)
+        .attr('cy', function(d){
+          return tooltipYscale(d.grades[getindex].grade)
+        } )
+        .attr('fill', function(d){return colors(d.grades[getindex].name)})
+
+        tsvg.selectAll("text")
+        .data(data)
+        .transition()
+        .duration(500)
+        .attr('y', function(d,i){
+          return tooltipYscale(d.grades[getindex].grade)-10
+        })
+        .text(function(d,i){return d.grades[getindex].grade})
+        .style('font-size', '10')
+
+      })
+      .on('mouseout', function(){
+        d3.select("#tooltip").classed("hidden", true)
+      })
+
+      tsvg.append("g")
+      .selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr('text-anchor', 'middle')
+      .attr('x',function(d,i){
+        return tooltipXscale(i)
+      })
+      .attr('y',tscreen.height-margin.bottom)
+      .text(function(d){
+        return "Day"+d.day
+      })
+      .style('font-family', 'ZCOOL QingKe HuangYou')
+      .style('font-size', '15px')
+
 
 
 
