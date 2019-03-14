@@ -37,8 +37,6 @@ var drawChart =function(data){
           .range([80, 1320])
 
 
-
-
       // rects
       svg.selectAll("rect")
       .data(data[date].grades)
