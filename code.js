@@ -246,16 +246,20 @@ var drawChart =function(data){
         .style('text-decoration', 'underline')
         .style('font-size', '25px')
         .style('fill', 'white')
-        d3.select(this)
-        .transition()
-        .duration(500)
-        .delay(200)
-        .style('text-decoration', 'none')
-        .style('font-size', '15px')
-        .style('fill', 'black')
+        var compare=parseInt(d3.select(this).attr("class").replace(/[^0-9]/ig,""))
+        if (compare!=date) {
+          d3.select(this)
+          .transition()
+          .duration(500)
+          .delay(200)
+          .style('text-decoration', 'none')
+          .style('font-size', '15px')
+          .style('fill', 'black')
+        }
+
       })
       .on("click",function(){
-        date=d3.select(this).attr("class").replace(/[^0-9]/ig,"")
+        date=parseInt(d3.select(this).attr("class").replace(/[^0-9]/ig,""))
 
           // rects
           svg.selectAll("rect")
@@ -270,21 +274,8 @@ var drawChart =function(data){
           .attr('height',function(d){return h-yScale(d.grade)})
 
 
-
-          // timeline
-          d3.select(".timeline")
-          .select("circle")
-          .transition()
-          .duration(500)
-          .attr('cx', timeposition(date))
-
-          d3.select(".day"+(date-1))
-          .transition()
-          .duration(500)
-          .style('text-decoration', 'none')
-          .style('font-size', '15px')
-          .style('fill', 'black')
-
+          //timeline
+          console.log(date)
 
           d3.select(".day"+date)
           .transition()
@@ -391,7 +382,9 @@ var drawChart =function(data){
                 svg.selectAll("rect")
                 .data(function(){
                   if (date<10){
+                    console.log(typeof(date))
                     date=date+1
+                    console.log(typeof(data[date]))
                     return data[date].grades
                   }
                   else if (date==10) {
